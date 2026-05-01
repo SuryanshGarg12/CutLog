@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="CutLog - Track calories, workouts, and body metrics with precision">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CutLog">
+    
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="/styles.css">
+    
+    <title>CutLog - Fitness Tracking</title>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-page="today" aria-label="Today">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Today</span>
+            </button>
+            <button class="nav-btn" data-page="log" aria-label="Log">
+                <span class="nav-icon">➕</span>
+                <span class="nav-label">Log</span>
+            </button>
+            <button class="nav-btn" data-page="food" aria-label="Food Library">
+                <span class="nav-icon">🍎</span>
+                <span class="nav-label">Food</span>
+            </button>
+            <button class="nav-btn" data-page="workouts" aria-label="Workouts">
+                <span class="nav-icon">💪</span>
+                <span class="nav-label">Workouts</span>
+            </button>
+            <button class="nav-btn" data-page="progress" aria-label="Progress">
+                <span class="nav-icon">📈</span>
+                <span class="nav-label">Progress</span>
+            </button>
+            <button class="nav-btn" data-page="settings" aria-label="Settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Today Page -->
+            <section id="today-page" class="page active">
+                <div class="page-header">
+                    <h1 id="today-date" class="page-title">Today</h1>
+                    <button id="sync-btn" class="sync-btn" aria-label="Sync" title="Sync with server">🔄</button>
+                </div>
+
+                <!-- Calorie Ring -->
+                <div class="calorie-ring-container">
+                    <div class="calorie-ring">
+                        <svg viewBox="0 0 120 120" class="ring-svg">
+                            <circle cx="60" cy="60" r="50" class="ring-background"></circle>
+                            <circle id="calorie-ring-fill" cx="60" cy="60" r="50" class="ring-fill"></circle>
+                        </svg>
+                        <div class="ring-text">
+                            <div id="ring-consumed" class="ring-value">0</div>
+                            <div class="ring-label">/ <span id="ring-goal">2000</span></div>
+                            <div class="ring-unit">kcal</div>
+                        </div>
+                    </div>
+                    <div class="calories-info">
+                        <div class="info-item">
+                            <span class="info-label">Burned</span>
+                            <span id="calories-burned" class="info-value">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Net</span>
+                            <span id="net-calories" class="info-value">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Remaining</span>
+                            <span id="remaining-calories" class="info-value">2000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Macro Progress -->
+                <div class="macros-section">
+                    <h2 class="section-title">Macronutrients</h2>
+                    <div class="macros-grid">
+                        <div class="macro-card">
+                            <div class="macro-name">Protein</div>
+                            <div class="macro-bar">
+                                <div id="protein-bar" class="macro-fill" style="--macro-color: #FF6B6B; width: 0%"></div>
+                            </div>
+                            <div class="macro-text">
+                                <span id="protein-current">0</span>g / <span id="protein-goal">150</span>g
+                            </div>
+                        </div>
+                        <div class="macro-card">
+                            <div class="macro-name">Carbs</div>
+                            <div class="macro-bar">
+                                <div id="carbs-bar" class="macro-fill" style="--macro-color: #4ECDC4; width: 0%"></div>
+                            </div>
+                            <div class="macro-text">
+                                <span id="carbs-current">0</span>g / <span id="carbs-goal">250</span>g
+                            </div>
+                        </div>
+                        <div class="macro-card">
+                            <div class="macro-name">Fat</div>
+                            <div class="macro-bar">
+                                <div id="fat-bar" class="macro-fill" style="--macro-color: #FFE66D; width: 0%"></div>
+                            </div>
+                            <div class="macro-text">
+                                <span id="fat-current">0</span>g / <span id="fat-goal">65</span>g
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food Log -->
+                <div class="logs-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Food Log</h2>
+                        <button class="btn-secondary" id="add-food-btn">+ Add Food</button>
+                    </div>
+                    <div id="food-logs-container" class="logs-container">
+                        <p class="empty-state">No food logged yet</p>
+                    </div>
+                </div>
+
+                <!-- Workout Log -->
+                <div class="logs-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Workout Log</h2>
+                        <button class="btn-secondary" id="add-workout-btn">+ Log Workout</button>
+                    </div>
+                    <div id="workout-logs-container" class="logs-container">
+                        <p class="empty-state">No workouts logged yet</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Log Page -->
+            <section id="log-page" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Log Entry</h1>
+                </div>
+
+                <div class="log-tabs">
+                    <button class="tab-btn active" data-tab="food-log">Food</button>
+                    <button class="tab-btn" data-tab="workout-log">Workout</button>
+                </div>
+
+                <!-- Food Log Tab -->
+                <div id="food-log" class="tab-content active">
+                    <form id="food-log-form" class="form">
+                        <div class="form-group">
+                            <label for="log-food-select">Select Food</label>
+                            <button type="button" id="food-search-btn" class="btn-primary">Search & Select</button>
+                        </div>
+                        <div id="selected-food-info" style="display: none;" class="food-info-card">
+                            <div id="selected-food-name"></div>
+                            <div id="selected-food-unit"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-food-quantity">Quantity</label>
+                            <input type="number" id="log-food-quantity" step="0.1" placeholder="e.g., 100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-meal-type">Meal Type</label>
+                            <select id="log-meal-type" required>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="snack">Snack</option>
+                                <option value="dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-food-date">Date</label>
+                            <input type="date" id="log-food-date" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Log Food</button>
+                    </form>
+                </div>
+
+                <!-- Workout Log Tab -->
+                <div id="workout-log" class="tab-content">
+                    <form id="workout-log-form" class="form">
+                        <div class="form-group">
+                            <label for="log-workout-type">Workout Type</label>
+                            <select id="log-workout-type" required>
+                                <option value="">Select Type</option>
+                                <option value="gym">Gym</option>
+                                <option value="running">Running</option>
+                                <option value="cardio">Cardio</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="gym-subtype-group" style="display: none;">
+                            <label for="log-gym-subtype">Gym Type</label>
+                            <select id="log-gym-subtype">
+                                <option value="push">Push</option>
+                                <option value="pull">Pull</option>
+                                <option value="legs">Legs</option>
+                                <option value="upper">Upper</option>
+                                <option value="lower">Lower</option>
+                                <option value="full">Full Body</option>
+                                <option value="core">Core</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="running-distance-group" style="display: none;">
+                            <label for="log-running-distance">Distance (km)</label>
+                            <input type="number" id="log-running-distance" step="0.1" placeholder="e.g., 5">
+                        </div>
+                        <div class="form-group" id="cardio-type-group" style="display: none;">
+                            <label for="log-cardio-type">Cardio Type</label>
+                            <select id="log-cardio-type">
+                                <option value="treadmill">Treadmill</option>
+                                <option value="cycling">Cycling</option>
+                                <option value="sports">Sports</option>
+                                <option value="walking">Walking</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-workout-duration">Duration (minutes)</label>
+                            <input type="number" id="log-workout-duration" min="1" placeholder="e.g., 60" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-workout-calories">Calories Burned (optional)</label>
+                            <input type="number" id="log-workout-calories" step="1" placeholder="Leave blank for estimate">
+                            <small class="form-hint">Leave empty to auto-estimate</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-workout-date">Date</label>
+                            <input type="date" id="log-workout-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-workout-notes">Notes (optional)</label>
+                            <textarea id="log-workout-notes" placeholder="Add notes..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Log Workout</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Food Library Page -->
+            <section id="food-page" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Food Library</h1>
+                </div>
+
+                <div class="food-actions">
+                    <input type="text" id="food-search" class="search-input" placeholder="Search foods...">
+                    <select id="food-category-filter" class="filter-select">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button class="btn-secondary" id="add-food-item-btn">+ Add Food</button>
+                    <button class="btn-secondary" id="import-csv-btn">📥 Import CSV</button>
+                </div>
+
+                <div id="food-library-container" class="food-library">
+                    <p class="empty-state">No foods found</p>
+                </div>
+            </section>
+
+            <!-- Workouts Page -->
+            <section id="workouts-page" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Workout History</h1>
+                </div>
+
+                <div class="workout-filters">
+                    <input type="date" id="workout-date-filter" class="date-input">
+                    <select id="workout-type-filter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="gym">Gym</option>
+                        <option value="running">Running</option>
+                        <option value="cardio">Cardio</option>
+                    </select>
+                </div>
+
+                <div id="workout-history-container" class="logs-container">
+                    <p class="empty-state">No workouts found</p>
+                </div>
+            </section>
+
+            <!-- Progress Page -->
+            <section id="progress-page" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Progress</h1>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="weight-tab">Weight</button>
+                    <button class="tab-btn" data-tab="metrics-tab">Metrics</button>
+                    <button class="tab-btn" data-tab="stats-tab">Stats</button>
+                </div>
+
+                <!-- Weight Tab -->
+                <div id="weight-tab" class="tab-content active">
+                    <div class="metrics-form">
+                        <h3>Log Weight</h3>
+                        <input type="date" id="weight-date" required>
+                        <input type="number" id="weight-value" step="0.1" placeholder="Weight (kg)" required>
+                        <button class="btn-primary" id="log-weight-btn">Log Weight</button>
+                    </div>
+                    <div id="weight-chart-container" style="margin-top: 20px;">
+                        <canvas id="weight-chart"></canvas>
+                    </div>
+                    <div id="weight-stats" class="stats-grid"></div>
+                </div>
+
+                <!-- Metrics Tab -->
+                <div id="metrics-tab" class="tab-content">
+                    <div class="metrics-form">
+                        <h3>Log Waist</h3>
+                        <input type="date" id="waist-date" required>
+                        <input type="number" id="waist-value" step="0.1" placeholder="Waist (cm)" required>
+                        <button class="btn-primary" id="log-waist-btn">Log Waist</button>
+                    </div>
+                    <div id="waist-chart-container" style="margin-top: 20px;">
+                        <canvas id="waist-chart"></canvas>
+                    </div>
+                    <div id="waist-stats" class="stats-grid"></div>
+                </div>
+
+                <!-- Stats Tab -->
+                <div id="stats-tab" class="tab-content">
+                    <div class="stats-summary">
+                        <div id="overall-stats" class="stats-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Page -->
+            <section id="settings-page" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Settings</h1>
+                </div>
+
+                <div class="settings-sections">
+                    <!-- Profile Section -->
+                    <div class="settings-section">
+                        <h2 class="section-title">Profile</h2>
+                        <form id="profile-form" class="form">
+                            <div class="form-group">
+                                <label for="profile-age">Age</label>
+                                <input type="number" id="profile-age" min="1" max="150" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-gender">Gender</label>
+                                <select id="profile-gender" required>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-height">Height (cm)</label>
+                                <input type="number" id="profile-height" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-weight">Weight (kg)</label>
+                                <input type="number" id="profile-weight" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-activity">Activity Level</label>
+                                <select id="profile-activity" required>
+                                    <option value="sedentary">Sedentary (little or no exercise)</option>
+                                    <option value="light">Light (1-3 days/week)</option>
+                                    <option value="moderate">Moderate (3-5 days/week)</option>
+                                    <option value="active">Active (6-7 days/week)</option>
+                                    <option value="veryactive">Very Active (intense daily)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-target-weight">Target Weight (kg)</label>
+                                <input type="number" id="profile-target-weight" step="0.1" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Profile</button>
+                        </form>
+                    </div>
+
+                    <!-- Goals Section -->
+                    <div class="settings-section">
+                        <h2 class="section-title">Calorie & Macro Goals</h2>
+                        <div id="bmr-tdee-info" class="info-card"></div>
+                        <form id="goals-form" class="form">
+                            <div class="form-group">
+                                <label for="goal-calorie">Daily Calorie Goal</label>
+                                <input type="number" id="goal-calorie" min="500" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="goal-protein">Protein Goal (g)</label>
+                                <input type="number" id="goal-protein" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="goal-carbs">Carbs Goal (g)</label>
+                                <input type="number" id="goal-carbs" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="goal-fat">Fat Goal (g)</label>
+                                <input type="number" id="goal-fat" min="0" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Goals</button>
+                        </form>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="settings-section">
+                        <h2 class="section-title">Data Management</h2>
+                        <div class="action-group">
+                            <button class="btn-secondary" id="export-json-btn">📥 Export as JSON</button>
+                            <button class="btn-secondary" id="export-csv-btn">📥 Export as CSV</button>
+                            <button class="btn-secondary" id="clear-data-btn">🗑️ Clear All Data</button>
+                        </div>
+                    </div>
+
+                    <!-- App Info -->
+                    <div class="settings-section">
+                        <h2 class="section-title">About</h2>
+                        <div class="info-card">
+                            <p><strong>CutLog v1.0</strong></p>
+                            <p>Track calories, workouts, and body metrics with precision.</p>
+                            <p>Last synced: <span id="last-sync-time">Never</span></p>
+                            <p>Storage: <span id="storage-status">Online</span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="food-search-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Search Food Library</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="modal-food-search" class="search-input" placeholder="Search foods...">
+                <select id="modal-food-category" class="filter-select">
+                    <option value="">All Categories</option>
+                </select>
+                <div id="modal-food-results" class="food-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-food-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Food</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-food-form" class="form">
+                    <div class="form-group">
+                        <label for="add-food-name">Food Name</label>
+                        <input type="text" id="add-food-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-category">Category</label>
+                        <input type="text" id="add-food-category" placeholder="e.g., Dairy">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-unit">Unit Type</label>
+                        <select id="add-food-unit" required>
+                            <option value="g">Grams (g)</option>
+                            <option value="ml">Milliliters (ml)</option>
+                            <option value="piece">Piece</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-base-value">Base Unit Value</label>
+                        <input type="number" id="add-food-base-value" step="1" value="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-calories">Calories</label>
+                        <input type="number" id="add-food-calories" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-protein">Protein (g)</label>
+                        <input type="number" id="add-food-protein" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-carbs">Carbs (g)</label>
+                        <input type="number" id="add-food-carbs" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-food-fat">Fat (g)</label>
+                        <input type="number" id="add-food-fat" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Food</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-food-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Food</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-food-form" class="form">
+                    <input type="hidden" id="edit-food-id">
+                    <div class="form-group">
+                        <label for="edit-food-name">Food Name</label>
+                        <input type="text" id="edit-food-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-food-category">Category</label>
+                        <input type="text" id="edit-food-category" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-food-calories">Calories</label>
+                        <input type="number" id="edit-food-calories" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-food-protein">Protein (g)</label>
+                        <input type="number" id="edit-food-protein" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-food-carbs">Carbs (g)</label>
+                        <input type="number" id="edit-food-carbs" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-food-fat">Fat (g)</label>
+                        <input type="number" id="edit-food-fat" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Update Food</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-csv-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Import Food CSV</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="form-hint">CSV Format: name,category,unit_type,base_unit_value,calories,protein,carbs,fat</p>
+                <input type="file" id="csv-file-input" accept=".csv" class="file-input">
+                <div id="csv-preview" class="csv-preview"></div>
+                <button id="csv-import-btn" class="btn-primary" style="display: none;">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed'));
+        }
+    </script>
+    <script src="/js/supabase.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/macros.js"></script>
+    <script src="/js/charts.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/app.js"></script>
+</body>
+</html>
