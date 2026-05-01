@@ -340,3 +340,4 @@ For issues or questions:
 **Built with ❤️ for fitness enthusiasts**
 
 Version 1.0 | Last Updated: May 2026
+# CutLog
