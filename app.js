@@ -136,15 +136,14 @@ class CutLogApp {
         // Hide all pages
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-        // Show selected page
-        const pageEl = document.getElementById(`${page}-page`);
-        if (pageEl) {
-            pageEl.classList.add('active');
-        }
+        // Show selected page - support both `id="<name>-page"` and `id="view-<name>"` conventions
+        const pageEl = document.getElementById(`view-${page}`) || document.getElementById(`${page}-page`);
+        if (pageEl) pageEl.classList.add('active');
 
-        // Update nav buttons
+        // Update nav buttons (be defensive if selector not found)
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`[data-page="${page}"]`).classList.add('active');
+        const navBtn = document.querySelector(`[data-page="${page}"]`) || document.querySelector(`#nav .nav-btn[data-page="${page}"]`);
+        if (navBtn) navBtn.classList.add('active');
 
         // Load page-specific data
         switch (page) {

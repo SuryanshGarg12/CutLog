@@ -1,0 +1,65 @@
+/* Reference theme extracted from reference.html - light-weight override to match layout/style */
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c26;
+  --border: #2a2a38;
+  --accent: #c8f060;
+  --accent2: #60c8f0;
+  --accent3: #f060c8;
+  --warn: #f0a060;
+  --text: #e8e8f0;
+  --muted: #6a6a80;
+  --radius: 14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow: hidden; }
+
+/* Shell */
+#app { display: flex; flex-direction: column; height: 100dvh; }
+#topbar, .page-header { padding: 52px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+#topbar h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+#topbar h1 span { color: var(--accent); }
+.date-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); background: var(--surface2); padding: 4px 10px; border-radius: 20px; }
+
+#content, .main-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px calc(80px + var(--safe-bottom)); }
+
+/* Nav */
+#nav, .bottom-nav { display: flex; background: var(--surface); border-top: 1px solid var(--border); padding: 8px 8px calc(8px + var(--safe-bottom)); flex-shrink: 0; gap: 4px; }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: 10px; border: none; background: transparent; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.nav-btn.active { color: var(--accent); background: rgba(200,240,96,0.08); }
+.nav-btn .nav-icon, .nav-btn svg { width: 22px; height: 22px; }
+
+/* Cards and panels */
+.card, .macro-card, .info-card, .logs-container, .food-library, .form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+.card-title, .section-title { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+
+/* Buttons */
+.btn-primary, .btn-primary:visited { width: 100%; padding: 14px; border-radius: 12px; border: none; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; background: var(--accent); color: #0a0a0f; }
+.btn-secondary, .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); padding: 10px 12px; border-radius: 10px; }
+
+/* Forms */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.form-group input, .form-group select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 15px; outline: none; }
+.form-group input:focus, .form-group select:focus, textarea:focus { border-color: var(--accent); }
+
+/* Lists */
+.log-item, .saved-food-item, .sf-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.log-name, .saved-food-name, .sf-item-name { font-size: 14px; font-weight: 600; }
+.empty-state { text-align: center; padding: 30px 20px; color: var(--muted); font-size: 13px; }
+
+/* Mini utilities */
+.setup-progress { display: flex; gap: 6px; margin-bottom: 20px; }
+.setup-dot { flex: 1; height: 3px; border-radius: 2px; background: var(--border); }
+.setup-dot.done { background: var(--accent); }
+
+/* Toast */
+#toast, #toast-container { position: fixed; bottom: calc(90px + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--accent); color: #0a0a0f; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 100; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Accessibility tweak */
+button { -webkit-tap-highlight-color: transparent; }
+
+/* Keep other layout rules minimal to avoid conflicts with existing styles.css */

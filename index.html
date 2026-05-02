@@ -73,518 +73,972 @@
                     <button id="sync-btn" class="sync-btn" aria-label="Sync" title="Sync with server">🔄</button>
                 </div>
 
-                <!-- Calorie Ring -->
-                <div class="calorie-ring-container">
-                    <div class="calorie-ring">
-                        <svg viewBox="0 0 120 120" class="ring-svg">
-                            <circle cx="60" cy="60" r="50" class="ring-background"></circle>
-                            <circle id="calorie-ring-fill" cx="60" cy="60" r="50" class="ring-fill"></circle>
+        <div id="content">
+            <!-- TODAY VIEW -->
+            <div class="view active" id="view-today">
+                <div class="card" id="calorieCard">
+                    <div class="card-title">Today's Calories</div>
+                    <div class="ring-wrap">
+                        <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="10"/>
+                            <circle id="ringArc" cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="10"
+                                stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                                transform="rotate(-90 50 50)" style="transition:stroke-dashoffset 0.6s ease"/>
                         </svg>
-                        <div class="ring-text">
-                            <div id="ring-consumed" class="ring-value">0</div>
-                            <div class="ring-label">/ <span id="ring-goal">2000</span></div>
-                            <div class="ring-unit">kcal</div>
+                        <div class="ring-center">
+                            <div class="ring-cal" id="ringCalNum">0</div>
+                            <div class="ring-label">of <span id="ringGoal">—</span> kcal</div>
                         </div>
-                    </div>
-                    <div class="calories-info">
-                        <div class="info-item">
-                            <span class="info-label">Burned</span>
-                            <span id="calories-burned" class="info-value">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Net</span>
-                            <span id="net-calories" class="info-value">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Remaining</span>
-                            <span id="remaining-calories" class="info-value">2000</span>
+                        <div class="ring-stats">
+                            <div class="ring-stat"><span class="label">Remaining</span><span class="val" id="statRemain">—</span></div>
+                            <div class="ring-stat"><span class="label">Burned</span><span class="val neutral" id="statBurned">0</span></div>
+                            <div class="ring-stat"><span class="label">Net</span><span class="val" id="statNet">—</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Macro Progress -->
-                <div class="macros-section">
-                    <h2 class="section-title">Macronutrients</h2>
-                    <div class="macros-grid">
-                        <div class="macro-card">
-                            <div class="macro-name">Protein</div>
-                            <div class="macro-bar">
-                                <div id="protein-bar" class="macro-fill" style="--macro-color: #FF6B6B; width: 0%"></div>
-                            </div>
-                            <div class="macro-text">
-                                <span id="protein-current">0</span>g / <span id="protein-goal">150</span>g
-                            </div>
-                        </div>
-                        <div class="macro-card">
-                            <div class="macro-name">Carbs</div>
-                            <div class="macro-bar">
-                                <div id="carbs-bar" class="macro-fill" style="--macro-color: #4ECDC4; width: 0%"></div>
-                            </div>
-                            <div class="macro-text">
-                                <span id="carbs-current">0</span>g / <span id="carbs-goal">250</span>g
-                            </div>
-                        </div>
-                        <div class="macro-card">
-                            <div class="macro-name">Fat</div>
-                            <div class="macro-bar">
-                                <div id="fat-bar" class="macro-fill" style="--macro-color: #FFE66D; width: 0%"></div>
-                            </div>
-                            <div class="macro-text">
-                                <span id="fat-current">0</span>g / <span id="fat-goal">65</span>g
-                            </div>
-                        </div>
+                <div class="card">
+                    <div class="card-title">Macros</div>
+                    <div class="macro-bars" id="macroBars">
+                        <!-- injected -->
                     </div>
                 </div>
 
-                <!-- Food Log -->
-                <div class="logs-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Food Log</h2>
-                        <button class="btn-secondary" id="add-food-btn">+ Add Food</button>
-                    </div>
-                    <div id="food-logs-container" class="logs-container">
-                        <p class="empty-state">No food logged yet</p>
-                    </div>
+                <div class="card">
+                    <div class="card-title">Food Log</div>
+                    <div id="foodLogList"><div class="empty-state"><div class="empty-icon">🍽️</div>Nothing logged yet</div></div>
                 </div>
 
-                <!-- Workout Log -->
-                <div class="logs-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Workout Log</h2>
-                        <button class="btn-secondary" id="add-workout-btn">+ Log Workout</button>
+                <div class="card">
+                    <div class="card-title">Exercise Today</div>
+                    <div id="exerciseLogList"><div class="empty-state"><div class="empty-icon">🏃</div>No exercise logged</div></div>
+                </div>
+            </div>
+
+            <!-- LOG VIEW -->
+            <div class="view" id="view-log">
+                <div class="section-divider"><span>Log Food</span></div>
+                <div class="card">
+                    <button class="btn btn-ghost" style="margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="openSheet()">
+                        <span style="font-size:16px">📚</span> Quick Add from Library
+                    </button>
+                    <div style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:14px;letter-spacing:1px">— OR ENTER MANUALLY —</div>
+                    <div class="form-group">
+                        <label>Food / Meal Name</label>
+                        <input type="text" id="foodName" placeholder="e.g. Chicken breast 200g">
                     </div>
-                    <div id="workout-logs-container" class="logs-container">
-                        <p class="empty-state">No workouts logged yet</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Log Page -->
-            <section id="log-page" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Log Entry</h1>
-                </div>
-
-                <div class="log-tabs">
-                    <button class="tab-btn active" data-tab="food-log">Food</button>
-                    <button class="tab-btn" data-tab="workout-log">Workout</button>
-                </div>
-
-                <!-- Food Log Tab -->
-                <div id="food-log" class="tab-content active">
-                    <form id="food-log-form" class="form">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="log-food-select">Select Food</label>
-                            <button type="button" id="food-search-btn" class="btn-primary">Search & Select</button>
-                        </div>
-                        <div id="selected-food-info" style="display: none;" class="food-info-card">
-                            <div id="selected-food-name"></div>
-                            <div id="selected-food-unit"></div>
+                            <label>Calories</label>
+                            <input type="number" id="foodCal" placeholder="kcal" inputmode="decimal">
                         </div>
                         <div class="form-group">
-                            <label for="log-food-quantity">Quantity</label>
-                            <input type="number" id="log-food-quantity" step="0.1" placeholder="e.g., 100" required>
+                            <label>Protein (g)</label>
+                            <input type="number" id="foodPro" placeholder="g" inputmode="decimal">
                         </div>
-                        <div class="form-group">
-                            <label for="log-meal-type">Meal Type</label>
-                            <select id="log-meal-type" required>
-                                <option value="breakfast">Breakfast</option>
-                                <option value="lunch">Lunch</option>
-                                <option value="snack">Snack</option>
-                                <option value="dinner">Dinner</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="log-food-date">Date</label>
-                            <input type="date" id="log-food-date" required>
-                        </div>
-                        <button type="submit" class="btn-primary">Log Food</button>
-                    </form>
-                </div>
-
-                <!-- Workout Log Tab -->
-                <div id="workout-log" class="tab-content">
-                    <form id="workout-log-form" class="form">
-                        <div class="form-group">
-                            <label for="log-workout-type">Workout Type</label>
-                            <select id="log-workout-type" required>
-                                <option value="">Select Type</option>
-                                <option value="gym">Gym</option>
-                                <option value="running">Running</option>
-                                <option value="cardio">Cardio</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="gym-subtype-group" style="display: none;">
-                            <label for="log-gym-subtype">Gym Type</label>
-                            <select id="log-gym-subtype">
-                                <option value="push">Push</option>
-                                <option value="pull">Pull</option>
-                                <option value="legs">Legs</option>
-                                <option value="upper">Upper</option>
-                                <option value="lower">Lower</option>
-                                <option value="full">Full Body</option>
-                                <option value="core">Core</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="running-distance-group" style="display: none;">
-                            <label for="log-running-distance">Distance (km)</label>
-                            <input type="number" id="log-running-distance" step="0.1" placeholder="e.g., 5">
-                        </div>
-                        <div class="form-group" id="cardio-type-group" style="display: none;">
-                            <label for="log-cardio-type">Cardio Type</label>
-                            <select id="log-cardio-type">
-                                <option value="treadmill">Treadmill</option>
-                                <option value="cycling">Cycling</option>
-                                <option value="sports">Sports</option>
-                                <option value="walking">Walking</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="log-workout-duration">Duration (minutes)</label>
-                            <input type="number" id="log-workout-duration" min="1" placeholder="e.g., 60" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="log-workout-calories">Calories Burned (optional)</label>
-                            <input type="number" id="log-workout-calories" step="1" placeholder="Leave blank for estimate">
-                            <small class="form-hint">Leave empty to auto-estimate</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="log-workout-date">Date</label>
-                            <input type="date" id="log-workout-date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="log-workout-notes">Notes (optional)</label>
-                            <textarea id="log-workout-notes" placeholder="Add notes..."></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary">Log Workout</button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Food Library Page -->
-            <section id="food-page" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Food Library</h1>
-                </div>
-
-                <div class="food-actions">
-                    <input type="text" id="food-search" class="search-input" placeholder="Search foods...">
-                    <select id="food-category-filter" class="filter-select">
-                        <option value="">All Categories</option>
-                    </select>
-                    <button class="btn-secondary" id="add-food-item-btn">+ Add Food</button>
-                    <button class="btn-secondary" id="import-csv-btn">📥 Import CSV</button>
-                </div>
-
-                <div id="food-library-container" class="food-library">
-                    <p class="empty-state">No foods found</p>
-                </div>
-            </section>
-
-            <!-- Workouts Page -->
-            <section id="workouts-page" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Workout History</h1>
-                </div>
-
-                <div class="workout-filters">
-                    <input type="date" id="workout-date-filter" class="date-input">
-                    <select id="workout-type-filter" class="filter-select">
-                        <option value="">All Types</option>
-                        <option value="gym">Gym</option>
-                        <option value="running">Running</option>
-                        <option value="cardio">Cardio</option>
-                    </select>
-                </div>
-
-                <div id="workout-history-container" class="logs-container">
-                    <p class="empty-state">No workouts found</p>
-                </div>
-            </section>
-
-            <!-- Progress Page -->
-            <section id="progress-page" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Progress</h1>
-                </div>
-
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="weight-tab">Weight</button>
-                    <button class="tab-btn" data-tab="metrics-tab">Metrics</button>
-                    <button class="tab-btn" data-tab="stats-tab">Stats</button>
-                </div>
-
-                <!-- Weight Tab -->
-                <div id="weight-tab" class="tab-content active">
-                    <div class="metrics-form">
-                        <h3>Log Weight</h3>
-                        <input type="date" id="weight-date" required>
-                        <input type="number" id="weight-value" step="0.1" placeholder="Weight (kg)" required>
-                        <button class="btn-primary" id="log-weight-btn">Log Weight</button>
                     </div>
-                    <div id="weight-chart-container" style="margin-top: 20px;">
-                        <canvas id="weight-chart"></canvas>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Carbs (g)</label>
+                            <input type="number" id="foodCarb" placeholder="g" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label>Fat (g)</label>
+                            <input type="number" id="foodFat" placeholder="g" inputmode="decimal">
+                        </div>
                     </div>
-                    <div id="weight-stats" class="stats-grid"></div>
+                    <button class="btn btn-primary" onclick="logFood()">+ Add Food</button>
                 </div>
 
-                <!-- Metrics Tab -->
-                <div id="metrics-tab" class="tab-content">
-                    <div class="metrics-form">
-                        <h3>Log Waist</h3>
-                        <input type="date" id="waist-date" required>
-                        <input type="number" id="waist-value" step="0.1" placeholder="Waist (cm)" required>
-                        <button class="btn-primary" id="log-waist-btn">Log Waist</button>
+                <div class="section-divider"><span>Log Exercise</span></div>
+                <div class="card">
+                    <div class="form-group">
+                        <label>Exercise Type</label>
+                        <div class="ex-chips" id="exChips"></div>
                     </div>
-                    <div id="waist-chart-container" style="margin-top: 20px;">
-                        <canvas id="waist-chart"></canvas>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Duration (min)</label>
+                            <input type="number" id="exDuration" placeholder="30" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label>Calories Burned</label>
+                            <input type="number" id="exCal" placeholder="est. kcal" inputmode="decimal">
+                        </div>
                     </div>
-                    <div id="waist-stats" class="stats-grid"></div>
+                    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;" id="exEstimate"></div>
+                    <button class="btn btn-primary" onclick="logExercise()">+ Add Exercise</button>
                 </div>
 
-                <!-- Stats Tab -->
-                <div id="stats-tab" class="tab-content">
-                    <div class="stats-summary">
-                        <div id="overall-stats" class="stats-grid"></div>
+                <div class="section-divider"><span>Weekly Check-in</span></div>
+                <div class="card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" id="checkinWeight" placeholder="kg" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label>Waist (cm)</label>
+                            <input type="number" id="checkinWaist" placeholder="cm" inputmode="decimal">
+                        </div>
                     </div>
+                    <button class="btn btn-ghost" style="margin-top:4px" onclick="logCheckin()">Save Check-in</button>
                 </div>
-            </section>
+            </div>
 
-            <!-- Settings Page -->
-            <section id="settings-page" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Settings</h1>
+            <!-- WEEKLY VIEW -->
+            <div class="view" id="view-week">
+                <div class="card">
+                    <div class="card-title">This Week</div>
+                    <div class="stat-grid" id="weekStats"></div>
                 </div>
 
-                <div class="settings-sections">
-                    <!-- Profile Section -->
+                <div class="card">
+                    <div class="card-title">Calorie Trend (7 days)</div>
+                    <div class="mini-chart" id="weekChart"></div>
+                </div>
+
+                <div class="section-divider"><span>Weekly Check-ins</span></div>
+                <div id="checkinList"></div>
+            </div>
+
+            <!-- SETTINGS VIEW -->
+            <div class="view" id="view-settings">
+                <div class="card">
                     <div class="settings-section">
-                        <h2 class="section-title">Profile</h2>
-                        <form id="profile-form" class="form">
+                        <div class="settings-title">⚡ Your Profile</div>
+                        <div class="form-row">
                             <div class="form-group">
-                                <label for="profile-age">Age</label>
-                                <input type="number" id="profile-age" min="1" max="150" required>
+                                <label>Age</label>
+                                <input type="number" id="setAge" inputmode="decimal">
                             </div>
                             <div class="form-group">
-                                <label for="profile-gender">Gender</label>
-                                <select id="profile-gender" required>
+                                <label>Weight (kg)</label>
+                                <input type="number" id="setWeight" inputmode="decimal">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Height (cm)</label>
+                                <input type="number" id="setHeight" inputmode="decimal">
+                            </div>
+                            <div class="form-group">
+                                <label>Sex</label>
+                                <select id="setSex">
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
-                                    <option value="other">Other</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="profile-height">Height (cm)</label>
-                                <input type="number" id="profile-height" step="0.1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="profile-weight">Weight (kg)</label>
-                                <input type="number" id="profile-weight" step="0.1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="profile-activity">Activity Level</label>
-                                <select id="profile-activity" required>
-                                    <option value="sedentary">Sedentary (little or no exercise)</option>
-                                    <option value="light">Light (1-3 days/week)</option>
-                                    <option value="moderate">Moderate (3-5 days/week)</option>
-                                    <option value="active">Active (6-7 days/week)</option>
-                                    <option value="veryactive">Very Active (intense daily)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="profile-target-weight">Target Weight (kg)</label>
-                                <input type="number" id="profile-target-weight" step="0.1" required>
-                            </div>
-                            <button type="submit" class="btn-primary">Save Profile</button>
-                        </form>
-                    </div>
-
-                    <!-- Goals Section -->
-                    <div class="settings-section">
-                        <h2 class="section-title">Calorie & Macro Goals</h2>
-                        <div id="bmr-tdee-info" class="info-card"></div>
-                        <form id="goals-form" class="form">
-                            <div class="form-group">
-                                <label for="goal-calorie">Daily Calorie Goal</label>
-                                <input type="number" id="goal-calorie" min="500" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="goal-protein">Protein Goal (g)</label>
-                                <input type="number" id="goal-protein" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="goal-carbs">Carbs Goal (g)</label>
-                                <input type="number" id="goal-carbs" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="goal-fat">Fat Goal (g)</label>
-                                <input type="number" id="goal-fat" min="0" required>
-                            </div>
-                            <button type="submit" class="btn-primary">Save Goals</button>
-                        </form>
-                    </div>
-
-                    <!-- Data Management -->
-                    <div class="settings-section">
-                        <h2 class="section-title">Data Management</h2>
-                        <div class="action-group">
-                            <button class="btn-secondary" id="export-json-btn">📥 Export as JSON</button>
-                            <button class="btn-secondary" id="export-csv-btn">📥 Export as CSV</button>
-                            <button class="btn-secondary" id="clear-data-btn">🗑️ Clear All Data</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Activity Level</label>
+                            <select id="setActivity">
+                                <option value="1.2">Sedentary (desk job)</option>
+                                <option value="1.375">Light (1-3x/week)</option>
+                                <option value="1.55">Moderate (3-5x/week)</option>
+                                <option value="1.725">Active (6-7x/week)</option>
+                                <option value="1.9">Very Active (2x/day)</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- App Info -->
                     <div class="settings-section">
-                        <h2 class="section-title">About</h2>
-                        <div class="info-card">
-                            <p><strong>CutLog v1.0</strong></p>
-                            <p>Track calories, workouts, and body metrics with precision.</p>
-                            <p>Last synced: <span id="last-sync-time">Never</span></p>
-                            <p>Storage: <span id="storage-status">Online</span></p>
+                        <div class="settings-title">🎯 Goals</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Calorie Goal</label>
+                                <input type="number" id="setCalGoal" inputmode="decimal">
+                            </div>
+                            <div class="form-group">
+                                <label>Target Weight (kg)</label>
+                                <input type="number" id="setTargetWeight" inputmode="decimal">
+                            </div>
+                        </div>
+                        <div class="form-row3">
+                            <div class="form-group">
+                                <label>Protein (g)</label>
+                                <input type="number" id="setProtein" inputmode="decimal">
+                            </div>
+                            <div class="form-group">
+                                <label>Carbs (g)</label>
+                                <input type="number" id="setCarbs" inputmode="decimal">
+                            </div>
+                            <div class="form-group">
+                                <label>Fat (g)</label>
+                                <input type="number" id="setFat" inputmode="decimal">
+                            </div>
                         </div>
                     </div>
+
+                    <div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:16px;" id="bmrDisplay"></div>
+
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
                 </div>
-            </section>
-        </main>
+
+                <div class="card" style="margin-top:12px;">
+                    <div class="card-title">Data</div>
+                    <button class="btn btn-ghost" style="margin-bottom:8px" onclick="exportData()">📤 Export JSON</button>
+                    <button class="btn btn-ghost" style="color:#f06060;border-color:#f06060" onclick="clearToday()">🗑 Clear Today's Log</button>
+                </div>
+            </div>
+            <!-- SAVED FOODS / LIBRARY VIEW -->
+            <div class="view" id="view-foods">
+                <div class="section-divider"><span>Add New Saved Food</span></div>
+                <div class="card" id="sfFormCard">
+                    <div class="form-group">
+                        <label>Food Name</label>
+                        <input type="text" id="sfName" placeholder="e.g. Paneer 100g">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="sfCat" placeholder="e.g. Protein, Breakfast, Snack…">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Calories</label><input type="number" id="sfCal" placeholder="kcal" inputmode="decimal"></div>
+                        <div class="form-group"><label>Protein (g)</label><input type="number" id="sfPro" placeholder="g" inputmode="decimal"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Carbs (g)</label><input type="number" id="sfCarb" placeholder="g" inputmode="decimal"></div>
+                        <div class="form-group"><label>Fat (g)</label><input type="number" id="sfFat" placeholder="g" inputmode="decimal"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSavedFood()">💾 Save to Library</button>
+                </div>
+
+                <div class="section-divider"><span>Your Library</span></div>
+                <div class="card">
+                    <div id="savedFoodsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <nav id="nav">
+            <button class="nav-btn active" onclick="switchTab('today',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/></svg>
+                Today
+            </button>
+            <button class="nav-btn" onclick="switchTab('log',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Log
+            </button>
+            <button class="nav-btn" onclick="switchTab('foods',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
+                Library
+            </button>
+            <button class="nav-btn" onclick="switchTab('week',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Weekly
+            </button>
+            <button class="nav-btn" onclick="switchTab('settings',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Settings
+            </button>
+        </nav>
     </div>
 
-    <!-- Modals -->
-    <div id="food-search-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Search Food Library</h2>
-                <button class="modal-close">&times;</button>
+    <!-- SAVED FOODS BOTTOM SHEET -->
+    <div id="savedFoodsSheet">
+        <div class="sheet-backdrop" onclick="closeSheet()"></div>
+        <div class="sheet-panel">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+                <div class="sheet-title">📚 Quick Add from Library</div>
+                <button class="sheet-close" onclick="closeSheet()">×</button>
             </div>
-            <div class="modal-body">
-                <input type="text" id="modal-food-search" class="search-input" placeholder="Search foods...">
-                <select id="modal-food-category" class="filter-select">
-                    <option value="">All Categories</option>
-                </select>
-                <div id="modal-food-results" class="food-list"></div>
+            <div class="sheet-search">
+                <input type="text" id="sheetSearch" placeholder="Search foods…" oninput="renderSheet()">
             </div>
+            <div class="sheet-cats" id="sheetCats"></div>
+            <div class="sheet-list" id="sheetList"></div>
         </div>
     </div>
 
-    <div id="add-food-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Food</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="add-food-form" class="form">
-                    <div class="form-group">
-                        <label for="add-food-name">Food Name</label>
-                        <input type="text" id="add-food-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-category">Category</label>
-                        <input type="text" id="add-food-category" placeholder="e.g., Dairy">
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-unit">Unit Type</label>
-                        <select id="add-food-unit" required>
-                            <option value="g">Grams (g)</option>
-                            <option value="ml">Milliliters (ml)</option>
-                            <option value="piece">Piece</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-base-value">Base Unit Value</label>
-                        <input type="number" id="add-food-base-value" step="1" value="100" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-calories">Calories</label>
-                        <input type="number" id="add-food-calories" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-protein">Protein (g)</label>
-                        <input type="number" id="add-food-protein" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-carbs">Carbs (g)</label>
-                        <input type="number" id="add-food-carbs" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-food-fat">Fat (g)</label>
-                        <input type="number" id="add-food-fat" step="0.1" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Add Food</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="edit-food-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Food</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="edit-food-form" class="form">
-                    <input type="hidden" id="edit-food-id">
-                    <div class="form-group">
-                        <label for="edit-food-name">Food Name</label>
-                        <input type="text" id="edit-food-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-food-category">Category</label>
-                        <input type="text" id="edit-food-category" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-food-calories">Calories</label>
-                        <input type="number" id="edit-food-calories" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-food-protein">Protein (g)</label>
-                        <input type="number" id="edit-food-protein" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-food-carbs">Carbs (g)</label>
-                        <input type="number" id="edit-food-carbs" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-food-fat">Fat (g)</label>
-                        <input type="number" id="edit-food-fat" step="0.1" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Update Food</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="import-csv-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Import Food CSV</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="form-hint">CSV Format: name,category,unit_type,base_unit_value,calories,protein,carbs,fat</p>
-                <input type="file" id="csv-file-input" accept=".csv" class="file-input">
-                <div id="csv-preview" class="csv-preview"></div>
-                <button id="csv-import-btn" class="btn-primary" style="display: none;">Import</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-container" class="toast-container"></div>
+    <div id="toast"></div>
 
     <script>
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed'));
+    // ─── STATE ───────────────────────────────────────────────────────
+    const STORAGE_KEY = 'cutlog_v2';
+    let state = loadState();
+
+    function defaultState() {
+        return {
+            profile: { age: 25, weight: 75, height: 175, sex: 'male', activity: 1.55 },
+            goals: { calories: 1800, protein: 150, carbs: 180, fat: 60, targetWeight: 70 },
+            logs: {},       // { "YYYY-MM-DD": { foods: [], exercises: [] } }
+            checkins: [],   // [{ date, weight, waist }]
+            savedFoods: [], // [{ id, name, cat, cal, pro, carb, fat }]
+            setupDone: false
+        };
+    }
+
+    function loadState() {
+        try {
+            const s = localStorage.getItem(STORAGE_KEY);
+            return s ? { ...defaultState(), ...JSON.parse(s) } : defaultState();
+        } catch { return defaultState(); }
+    }
+
+    function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function todayKey() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    function getTodayLog() {
+        const k = todayKey();
+        if (!state.logs[k]) state.logs[k] = { foods: [], exercises: [] };
+        return state.logs[k];
+    }
+
+    // ─── BMR ─────────────────────────────────────────────────────────
+    function calcBMR(p) {
+        // Mifflin-St Jeor
+        const base = p.sex === 'male'
+            ? 10 * p.weight + 6.25 * p.height - 5 * p.age + 5
+            : 10 * p.weight + 6.25 * p.height - 5 * p.age - 161;
+        return Math.round(base);
+    }
+
+    function calcTDEE(p) {
+        return Math.round(calcBMR(p) * p.activity);
+    }
+
+    // ─── EXERCISE CALORIE ESTIMATES (kcal/min @ 75kg, rough) ─────────
+    const EXERCISES = [
+        { id: 'walk', label: '🚶 Walk', met: 3.5 },
+        { id: 'run', label: '🏃 Run', met: 9.8 },
+        { id: 'cycle', label: '🚴 Cycle', met: 7.5 },
+        { id: 'swim', label: '🏊 Swim', met: 7.0 },
+        { id: 'hiit', label: '🔥 HIIT', met: 10.0 },
+        { id: 'lift', label: '🏋️ Weights', met: 5.0 },
+        { id: 'yoga', label: '🧘 Yoga', met: 2.5 },
+        { id: 'sports', label: '⚽ Sports', met: 8.0 },
+    ];
+
+    let selectedExercise = null;
+
+    function buildExChips() {
+        const wrap = document.getElementById('exChips');
+        wrap.innerHTML = EXERCISES.map(e =>
+            `<div class="ex-chip" data-id="${e.id}" onclick="selectExercise('${e.id}')">${e.label}</div>`
+        ).join('');
+    }
+
+    function selectExercise(id) {
+        selectedExercise = id;
+        document.querySelectorAll('.ex-chip').forEach(c => {
+            c.classList.toggle('selected', c.dataset.id === id);
+        });
+        estimateExerciseCal();
+    }
+
+    function estimateExerciseCal() {
+        if (!selectedExercise) return;
+        const ex = EXERCISES.find(e => e.id === selectedExercise);
+        const dur = parseFloat(document.getElementById('exDuration').value) || 0;
+        if (!dur) { document.getElementById('exEstimate').textContent = ''; return; }
+        const w = state.profile.weight || 75;
+        const est = Math.round((ex.met * 3.5 * w / 200) * dur);
+        document.getElementById('exEstimate').textContent = `Estimated: ~${est} kcal`;
+        document.getElementById('exCal').value = est;
+    }
+
+    document.getElementById('exDuration').addEventListener('input', estimateExerciseCal);
+
+    // ─── LOG FOOD ────────────────────────────────────────────────────
+    function logFood() {
+        const name = document.getElementById('foodName').value.trim();
+        const cal = parseFloat(document.getElementById('foodCal').value) || 0;
+        const pro = parseFloat(document.getElementById('foodPro').value) || 0;
+        const carb = parseFloat(document.getElementById('foodCarb').value) || 0;
+        const fat = parseFloat(document.getElementById('foodFat').value) || 0;
+
+        if (!name || !cal) { toast('Add a name and calories'); return; }
+
+        getTodayLog().foods.push({ name, cal, pro, carb, fat, time: Date.now() });
+        saveState();
+
+        // clear
+        ['foodName','foodCal','foodPro','foodCarb','foodFat'].forEach(id => document.getElementById(id).value = '');
+        toast('Food logged ✓');
+        renderToday();
+    }
+
+    function logExercise() {
+        if (!selectedExercise) { toast('Select an exercise type'); return; }
+        const ex = EXERCISES.find(e => e.id === selectedExercise);
+        const dur = parseFloat(document.getElementById('exDuration').value) || 0;
+        const cal = parseFloat(document.getElementById('exCal').value) || 0;
+        if (!dur) { toast('Enter duration'); return; }
+
+        getTodayLog().exercises.push({ id: selectedExercise, label: ex.label, dur, cal, time: Date.now() });
+        saveState();
+        document.getElementById('exDuration').value = '';
+        document.getElementById('exCal').value = '';
+        document.getElementById('exEstimate').textContent = '';
+        selectedExercise = null;
+        document.querySelectorAll('.ex-chip').forEach(c => c.classList.remove('selected'));
+        toast('Exercise logged ✓');
+        renderToday();
+    }
+
+    function logCheckin() {
+        const weight = parseFloat(document.getElementById('checkinWeight').value);
+        const waist = parseFloat(document.getElementById('checkinWaist').value);
+        if (!weight) { toast('Enter weight'); return; }
+
+        const today = todayKey();
+        // Update or add
+        const existing = state.checkins.findIndex(c => c.date === today);
+        const entry = { date: today, weight, waist: waist || null };
+        if (existing >= 0) state.checkins[existing] = entry;
+        else state.checkins.push(entry);
+
+        // update profile weight
+        state.profile.weight = weight;
+        saveState();
+        document.getElementById('checkinWeight').value = '';
+        document.getElementById('checkinWaist').value = '';
+        toast('Check-in saved ✓');
+        renderWeekly();
+    }
+
+    function deleteFood(idx) {
+        getTodayLog().foods.splice(idx, 1);
+        saveState();
+        renderToday();
+    }
+
+    // ─── RENDER TODAY ────────────────────────────────────────────────
+    function renderToday() {
+        const log = getTodayLog();
+        const g = state.goals;
+
+        const totals = log.foods.reduce((acc, f) => {
+            acc.cal += f.cal; acc.pro += f.pro; acc.carb += f.carb; acc.fat += f.fat;
+            return acc;
+        }, { cal: 0, pro: 0, carb: 0, fat: 0 });
+
+        const burnedCal = log.exercises.reduce((s, e) => s + e.cal, 0);
+        const netCal = totals.cal - burnedCal;
+
+        // Ring
+        const pct = Math.min(totals.cal / g.calories, 1.15);
+        const offset = 251.2 - (pct * 251.2);
+        const ring = document.getElementById('ringArc');
+        ring.style.strokeDashoffset = offset;
+        ring.style.stroke = totals.cal > g.calories ? '#f06060' : 'var(--accent)';
+        document.getElementById('ringCalNum').textContent = Math.round(totals.cal);
+        document.getElementById('ringGoal').textContent = g.calories;
+        const remain = g.calories - totals.cal;
+        document.getElementById('statRemain').textContent = Math.round(remain);
+        document.getElementById('statRemain').className = 'val ' + (remain < 0 ? 'over' : 'on');
+        document.getElementById('statBurned').textContent = Math.round(burnedCal);
+        document.getElementById('statNet').textContent = Math.round(netCal);
+        document.getElementById('statNet').className = 'val ' + (netCal > g.calories ? 'over' : netCal < g.calories - 200 ? 'on' : '');
+
+        // Macros
+        const macros = [
+            { name: 'Protein', val: totals.pro, goal: g.protein, color: '#f060c8' },
+            { name: 'Carbs', val: totals.carb, goal: g.carbs, color: '#60c8f0' },
+            { name: 'Fat', val: totals.fat, goal: g.fat, color: '#f0a060' },
+        ];
+        document.getElementById('macroBars').innerHTML = macros.map(m => {
+            const pct = g[m.name.toLowerCase()] > 0 ? Math.min(100, (m.val / m.goal) * 100) : 0;
+            const reached = Math.min(100, Math.round(pct));
+            return `<div class="macro-row">
+                <div class="macro-name" style="color:${m.color}">${m.name}</div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${reached}%;background:${m.color}"></div></div>
+                <div class="macro-pct"><span class="pct-val">${reached}%</span> <span style="font-size:10px;color:var(--muted)">${Math.round(m.val)}/${m.goal}g</span></div>
+            </div>`;
+        }).join('');
+
+        // Food list
+        const fl = document.getElementById('foodLogList');
+        if (!log.foods.length) {
+            fl.innerHTML = '<div class="empty-state"><div class="empty-icon">🍽️</div>Nothing logged yet</div>';
+        } else {
+            fl.innerHTML = log.foods.map((f, i) =>
+                `<div class="log-item">
+                    <div>
+                        <div class="log-name">${f.name}</div>
+                        <div class="log-macros">P:${f.pro}g C:${f.carb}g F:${f.fat}g</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <div class="log-cal">${Math.round(f.cal)}</div>
+                        <button class="log-del" onclick="deleteFood(${i})">×</button>
+                    </div>
+                </div>`
+            ).join('');
         }
+
+        // Exercise list
+        const el = document.getElementById('exerciseLogList');
+        if (!log.exercises.length) {
+            el.innerHTML = '<div class="empty-state"><div class="empty-icon">🏃</div>No exercise logged</div>';
+        } else {
+            el.innerHTML = log.exercises.map((e, i) =>
+                `<div class="log-item">
+                    <div>
+                        <div class="log-name">${e.label}</div>
+                        <div class="log-macros">${e.dur} min</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <div class="log-cal" style="color:var(--accent2)">-${Math.round(e.cal)}</div>
+                        <button class="log-del" onclick="deleteExercise(${i})">×</button>
+                    </div>
+                </div>`
+            ).join('');
+        }
+    }
+
+    function deleteExercise(idx) {
+        getTodayLog().exercises.splice(idx, 1);
+        saveState();
+        renderToday();
+    }
+
+    // ─── RENDER WEEKLY ───────────────────────────────────────────────
+    function renderWeekly() {
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            const log = state.logs[key] || { foods: [], exercises: [] };
+            const cal = log.foods.reduce((s, f) => s + f.cal, 0);
+            const burned = log.exercises.reduce((s, e) => s + e.cal, 0);
+            days.push({ key, cal, burned, net: cal - burned, label: d.toLocaleDateString('en', { weekday: 'short' }) });
+        }
+
+        const totalCal = days.reduce((s, d) => s + d.cal, 0);
+        const totalBurned = days.reduce((s, d) => s + d.burned, 0);
+        const avgCal = Math.round(totalCal / 7);
+        const totalDeficit = Math.round((state.goals.calories * 7) - totalCal + totalBurned);
+        const estFatLoss = (totalDeficit / 7700).toFixed(2); // 7700 kcal ~ 1kg fat
+
+        document.getElementById('weekStats').innerHTML = `
+            <div class="stat-box"><div class="s-label">Avg Daily</div><div class="s-val ${avgCal <= state.goals.calories ? 'positive' : 'negative'}">${avgCal}<span class="s-unit"> kcal</span></div></div>
+            <div class="stat-box"><div class="s-label">Weekly Deficit</div><div class="s-val ${totalDeficit >= 0 ? 'positive' : 'negative'}">${totalDeficit > 0 ? '+' : ''}${totalDeficit}<span class="s-unit"> kcal</span></div></div>
+            <div class="stat-box"><div class="s-label">Cals Burned</div><div class="s-val neutral">${totalBurned}<span class="s-unit"> kcal</span></div></div>
+            <div class="stat-box"><div class="s-label">Est. Fat Loss</div><div class="s-val ${parseFloat(estFatLoss) > 0 ? 'positive' : ''}">${estFatLoss}<span class="s-unit"> kg</span></div></div>
+        `;
+
+        // Chart
+        const maxCal = Math.max(...days.map(d => d.cal), state.goals.calories, 1);
+        document.getElementById('weekChart').innerHTML = `
+            <div class="chart-bars">
+                ${days.map(d => {
+                    const h = Math.round((d.cal / maxCal) * 56);
+                    const over = d.cal > state.goals.calories;
+                    const goalH = Math.round((state.goals.calories / maxCal) * 56);
+                    return `<div class="chart-bar-wrap">
+                        <div class="chart-bar" style="height:${h}px;background:${over ? '#f06060' : 'var(--accent)'}"></div>
+                    </div>`;
+                }).join('')}
+            </div>
+            <div style="display:flex;gap:4px;margin-top:4px">
+                ${days.map(d => `<div style="flex:1;text-align:center" class="chart-label">${d.label}</div>`).join('')}
+            </div>
+            <div style="position:relative;height:0">
+                <div style="position:absolute;bottom:${Math.round((state.goals.calories / maxCal) * 56) + 20}px;left:0;right:0;height:1px;background:rgba(200,240,96,0.3);border-top:1px dashed var(--accent)"></div>
+            </div>
+        `;
+
+        // Checkins
+        const cl = document.getElementById('checkinList');
+        const sorted = [...state.checkins].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+        if (!sorted.length) {
+            cl.innerHTML = '<div class="card"><div class="empty-state"><div class="empty-icon">⚖️</div>No weigh-ins yet</div></div>';
+        } else {
+            cl.innerHTML = sorted.map((c, i) => {
+                const prev = sorted[i + 1];
+                const diff = prev ? (c.weight - prev.weight).toFixed(1) : null;
+                return `<div class="week-card">
+                    <div class="week-header">
+                        <span class="week-title">⚖️ ${c.weight} kg ${c.waist ? `· ${c.waist}cm waist` : ''}</span>
+                        <span class="week-date">${c.date}</span>
+                    </div>
+                    ${diff !== null ? `<div style="font-size:12px;color:${parseFloat(diff) < 0 ? 'var(--accent)' : '#f06060'}">${parseFloat(diff) > 0 ? '+' : ''}${diff} kg vs prev</div>` : '<div style="font-size:11px;color:var(--muted)">Baseline</div>'}
+                </div>`;
+            }).join('');
+        }
+    }
+
+    // ─── SETTINGS ───────────────────────────────────────────────────
+    function renderSettings() {
+        const p = state.profile;
+        const g = state.goals;
+        document.getElementById('setAge').value = p.age;
+        document.getElementById('setWeight').value = p.weight;
+        document.getElementById('setHeight').value = p.height;
+        document.getElementById('setSex').value = p.sex;
+        document.getElementById('setActivity').value = p.activity;
+        document.getElementById('setCalGoal').value = g.calories;
+        document.getElementById('setTargetWeight').value = g.targetWeight;
+        document.getElementById('setProtein').value = g.protein;
+        document.getElementById('setCarbs').value = g.carbs;
+        document.getElementById('setFat').value = g.fat;
+        updateBMRDisplay();
+    }
+
+    function updateBMRDisplay() {
+        const bmr = calcBMR(state.profile);
+        const tdee = calcTDEE(state.profile);
+        document.getElementById('bmrDisplay').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">BMR</div>
+                <div style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--accent2)">${bmr} <span style="font-size:11px;color:var(--muted)">kcal</span></div></div>
+                <div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">TDEE</div>
+                <div style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--accent)">${tdee} <span style="font-size:11px;color:var(--muted)">kcal</span></div></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px">Mifflin-St Jeor formula · Adjust your calorie goal above</div>
+        `;
+    }
+
+    function saveSettings() {
+        state.profile = {
+            age: parseFloat(document.getElementById('setAge').value) || 25,
+            weight: parseFloat(document.getElementById('setWeight').value) || 75,
+            height: parseFloat(document.getElementById('setHeight').value) || 175,
+            sex: document.getElementById('setSex').value,
+            activity: parseFloat(document.getElementById('setActivity').value),
+        };
+        state.goals = {
+            calories: parseFloat(document.getElementById('setCalGoal').value) || 1800,
+            targetWeight: parseFloat(document.getElementById('setTargetWeight').value) || 70,
+            protein: parseFloat(document.getElementById('setProtein').value) || 150,
+            carbs: parseFloat(document.getElementById('setCarbs').value) || 180,
+            fat: parseFloat(document.getElementById('setFat').value) || 60,
+        };
+        saveState();
+        updateBMRDisplay();
+        renderToday();
+        toast('Settings saved ✓');
+    }
+
+    // ─── ONBOARDING ───────────────────────────────────────────────────
+    const SETUP_STEPS = [
+        {
+            id: 'basics',
+            title: 'Hey, let\'s get you\n<em>set up right.</em>',
+            subtitle: 'First, some basics about you so we can calculate your BMR and TDEE.',
+            fields: `
+                <div class="form-row">
+                    <div class="form-group"><label>Age</label><input type="number" id="ob_age" placeholder="25" inputmode="decimal"></div>
+                    <div class="form-group"><label>Sex</label><select id="ob_sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Weight (kg)</label><input type="number" id="ob_weight" placeholder="75" inputmode="decimal"></div>
+                    <div class="form-group"><label>Height (cm)</label><input type="number" id="ob_height" placeholder="175" inputmode="decimal"></div>
+                </div>
+                <div class="form-group"><label>Activity Level</label>
+                    <select id="ob_activity">
+                        <option value="1.2">Sedentary (desk job)</option>
+                        <option value="1.375">Light (1-3x/week)</option>
+                        <option value="1.55" selected>Moderate (3-5x/week)</option>
+                        <option value="1.725">Active (6-7x/week)</option>
+                    </select>
+                </div>
+            `,
+            next: () => {
+                const age = parseFloat(document.getElementById('ob_age').value);
+                const weight = parseFloat(document.getElementById('ob_weight').value);
+                const height = parseFloat(document.getElementById('ob_height').value);
+                if (!age || !weight || !height) { toast('Fill in all fields'); return false; }
+                state.profile.age = age;
+                state.profile.sex = document.getElementById('ob_sex').value;
+                state.profile.weight = weight;
+                state.profile.height = height;
+                state.profile.activity = parseFloat(document.getElementById('ob_activity').value);
+                return true;
+            }
+        },
+        {
+            id: 'goals',
+            title: 'Your\n<em>goals.</em>',
+            subtitle: 'Set your calorie target and macro goals. You can always adjust these later.',
+            fields: () => {
+                const tdee = calcTDEE(state.profile);
+                const suggestCal = Math.round(tdee * 0.8);
+                return `
+                    <div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:16px">
+                        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">YOUR TDEE</div>
+                        <div style="font-family:'Space Mono',monospace;font-size:24px;font-weight:700;color:var(--accent)">${tdee} kcal</div>
+                        <div style="font-size:11px;color:var(--muted);margin-top:4px">We suggest ${suggestCal} kcal for a ~20% deficit</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Daily Calorie Goal</label><input type="number" id="ob_cal" value="${suggestCal}" inputmode="decimal"></div>
+                        <div class="form-group"><label>Target Weight (kg)</label><input type="number" id="ob_target" placeholder="${Math.round(state.profile.weight * 0.92)}" inputmode="decimal"></div>
+                    </div>
+                    <div class="form-row3">
+                        <div class="form-group"><label>Protein (g)</label><input type="number" id="ob_pro" value="${Math.round(state.profile.weight * 2)}" inputmode="decimal"></div>
+                        <div class="form-group"><label>Carbs (g)</label><input type="number" id="ob_carb" value="${Math.round((suggestCal * 0.4) / 4)}" inputmode="decimal"></div>
+                        <div class="form-group"><label>Fat (g)</label><input type="number" id="ob_fat" value="${Math.round((suggestCal * 0.25) / 9)}" inputmode="decimal"></div>
+                    </div>
+                `;
+            },
+            next: () => {
+                const cal = parseFloat(document.getElementById('ob_cal').value);
+                if (!cal) { toast('Set a calorie goal'); return false; }
+                state.goals.calories = cal;
+                state.goals.targetWeight = parseFloat(document.getElementById('ob_target').value) || Math.round(state.profile.weight * 0.92);
+                state.goals.protein = parseFloat(document.getElementById('ob_pro').value) || 150;
+                state.goals.carbs = parseFloat(document.getElementById('ob_carb').value) || 150;
+                state.goals.fat = parseFloat(document.getElementById('ob_fat').value) || 50;
+                return true;
+            }
+        },
+        {
+            id: 'done',
+            title: 'All set.\n<em>Let\'s cut.</em>',
+            subtitle: `Log your food and exercise every day. Do a weekly weigh-in every Monday morning. Your data is saved on this device.\n\n👉 Save this page to your iPhone home screen for full-app experience:\nSafari → Share → "Add to Home Screen"`,
+            fields: `<div style="font-size:36px;text-align:center;margin:20px 0">🎯</div>`,
+            next: () => { state.setupDone = true; return true; }
+        }
+    ];
+
+    let setupStep = 0;
+
+    function renderSetupStep() {
+        const step = SETUP_STEPS[setupStep];
+        const prog = document.getElementById('setupProgress');
+        prog.innerHTML = SETUP_STEPS.map((_, i) =>
+            `<div class="setup-dot ${i <= setupStep ? 'done' : ''}"></div>`
+        ).join('');
+
+        const fields = typeof step.fields === 'function' ? step.fields() : step.fields;
+        const isLast = setupStep === SETUP_STEPS.length - 1;
+
+        document.getElementById('setupStep').innerHTML = `
+            <h2 style="white-space:pre-line">${step.title}</h2>
+            <p>${step.subtitle}</p>
+            ${fields}
+            <button class="btn btn-primary" style="margin-top:20px" onclick="nextSetupStep()">
+                ${isLast ? 'Start Logging →' : 'Continue →'}
+            </button>
+        `;
+    }
+
+    function nextSetupStep() {
+        if (!SETUP_STEPS[setupStep].next()) return;
+        saveState();
+        setupStep++;
+        if (setupStep >= SETUP_STEPS.length) {
+            document.getElementById('onboarding').classList.add('hidden');
+            renderApp();
+        } else {
+            renderSetupStep();
+        }
+    }
+
+    // ─── TABS ─────────────────────────────────────────────────────────
+    function switchTab(name, btn) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('view-' + name).classList.add('active');
+        btn.classList.add('active');
+        if (name === 'today') renderToday();
+        if (name === 'week') renderWeekly();
+        if (name === 'settings') renderSettings();
+        if (name === 'foods') renderSavedFoodsList();
+    }
+
+    // ─── UTILS ────────────────────────────────────────────────────────
+    function toast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    function clearToday() {
+        if (confirm('Clear today\'s food and exercise log?')) {
+            state.logs[todayKey()] = { foods: [], exercises: [] };
+            saveState();
+            renderToday();
+            toast('Today cleared');
+        }
+    }
+
+    function exportData() {
+        const json = JSON.stringify(state, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cutlog-${todayKey()}.json`;
+        a.click();
+        toast('Exported!');
+    }
+
+    // ─── DATE ─────────────────────────────────────────────────────────
+    function updateDate() {
+        const now = new Date();
+        document.getElementById('todayDate').textContent =
+            now.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    // ─── SAVED FOODS ─────────────────────────────────────────────────
+    function getSavedFoods() {
+        if (!state.savedFoods) state.savedFoods = [];
+        return state.savedFoods;
+    }
+
+    let sfEditId = null;
+
+    function saveSavedFood() {
+        const name = document.getElementById('sfName').value.trim();
+        const cat  = document.getElementById('sfCat').value.trim() || 'Other';
+        const cal  = parseFloat(document.getElementById('sfCal').value) || 0;
+        const pro  = parseFloat(document.getElementById('sfPro').value) || 0;
+        const carb = parseFloat(document.getElementById('sfCarb').value) || 0;
+        const fat  = parseFloat(document.getElementById('sfFat').value) || 0;
+        if (!name || !cal) { toast('Name and calories required'); return; }
+
+        const foods = getSavedFoods();
+        if (sfEditId !== null) {
+            const idx = foods.findIndex(f => f.id === sfEditId);
+            if (idx >= 0) foods[idx] = { id: sfEditId, name, cat, cal, pro, carb, fat };
+            sfEditId = null;
+            document.querySelector('#sfFormCard .btn-primary').textContent = '💾 Save to Library';
+        } else {
+            foods.push({ id: Date.now(), name, cat, cal, pro, carb, fat });
+        }
+        saveState();
+        ['sfName','sfCat','sfCal','sfPro','sfCarb','sfFat'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('sfCat').value = '';
+        toast('Saved to library ✓');
+        renderSavedFoodsList();
+    }
+
+    function deleteSavedFood(id) {
+        if (!confirm('Remove from library?')) return;
+        state.savedFoods = getSavedFoods().filter(f => f.id !== id);
+        saveState();
+        renderSavedFoodsList();
+        toast('Removed');
+    }
+
+    function editSavedFood(id) {
+        const f = getSavedFoods().find(f => f.id === id);
+        if (!f) return;
+        sfEditId = id;
+        document.getElementById('sfName').value = f.name;
+        document.getElementById('sfCat').value = f.cat;
+        document.getElementById('sfCal').value = f.cal;
+        document.getElementById('sfPro').value = f.pro;
+        document.getElementById('sfCarb').value = f.carb;
+        document.getElementById('sfFat').value = f.fat;
+        document.querySelector('#sfFormCard .btn-primary').textContent = '✏️ Update Food';
+        document.getElementById('sfFormCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderSavedFoodsList() {
+        const foods = getSavedFoods();
+        const el = document.getElementById('savedFoodsList');
+        if (!foods.length) {
+            el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>No saved foods yet.<br>Add your go-to meals above.</div>';
+            return;
+        }
+        // group by category
+        const cats = {};
+        foods.forEach(f => { if (!cats[f.cat]) cats[f.cat] = []; cats[f.cat].push(f); });
+        el.innerHTML = Object.entries(cats).map(([cat, items]) => `
+            <div style="margin-bottom:16px">
+                <div style="font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">${cat}</div>
+                ${items.map(f => `
+                    <div class="sf-item">
+                        <div class="sf-item-info">
+                            <div class="sf-item-name">${f.name}</div>
+                            <div class="sf-item-detail">${f.cal} kcal · P${f.pro} C${f.carb} F${f.fat}</div>
+                        </div>
+                        <button class="sf-edit-btn" onclick="editSavedFood(${f.id})">Edit</button>
+                        <button class="sf-del-btn" onclick="deleteSavedFood(${f.id})">×</button>
+                    </div>
+                `).join('')}
+            </div>
+        `).join('');
+    }
+
+    // ─── BOTTOM SHEET ─────────────────────────────────────────────────
+    let sheetActiveCat = 'All';
+
+    function openSheet() {
+        sheetActiveCat = 'All';
+        document.getElementById('sheetSearch').value = '';
+        document.getElementById('savedFoodsSheet').classList.add('open');
+        renderSheet();
+        setTimeout(() => document.getElementById('sheetSearch').focus(), 400);
+    }
+
+    function closeSheet() {
+        document.getElementById('savedFoodsSheet').classList.remove('open');
+    }
+
+    function renderSheet() {
+        const foods = getSavedFoods();
+        const q = document.getElementById('sheetSearch').value.toLowerCase();
+        const cats = ['All', ...new Set(foods.map(f => f.cat))];
+
+        // category chips
+        document.getElementById('sheetCats').innerHTML = cats.map(c =>
+            `<div class="cat-chip ${c === sheetActiveCat ? 'active' : ''}" onclick="setSheetCat('${c}')">${c}</div>`
+        ).join('');
+
+        // filtered list
+        let filtered = foods;
+        if (sheetActiveCat !== 'All') filtered = filtered.filter(f => f.cat === sheetActiveCat);
+        if (q) filtered = filtered.filter(f => f.name.toLowerCase().includes(q) || f.cat.toLowerCase().includes(q));
+
+        const list = document.getElementById('sheetList');
+        if (!filtered.length) {
+            list.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">🔍</div>No foods found.<br>Add them in the Library tab.</div>';
+            return;
+        }
+        list.innerHTML = filtered.map(f => `
+            <div class="saved-food-item">
+                <div class="saved-food-info">
+                    <div class="saved-food-name">${f.name}</div>
+                    <div class="saved-food-macros">P${f.pro}g · C${f.carb}g · F${f.fat}g</div>
+                </div>
+                <div class="saved-food-cal">${f.cal}</div>
+                <button class="saved-food-add" onclick="quickAddFood(${f.id})">+ Add</button>
+            </div>
+        `).join('');
+    }
+
+    function setSheetCat(cat) {
+        sheetActiveCat = cat;
+        renderSheet();
+    }
+
+    function quickAddFood(id) {
+        const f = getSavedFoods().find(f => f.id === id);
+        if (!f) return;
+        getTodayLog().foods.push({ name: f.name, cal: f.cal, pro: f.pro, carb: f.carb, fat: f.fat, time: Date.now() });
+        saveState();
+        renderToday();
+        toast(`${f.name} added ✓`);
+        // brief flash then close
+        setTimeout(closeSheet, 600);
+    }
+
+    // ─── INIT ─────────────────────────────────────────────────────────
+    function renderApp() {
+        updateDate();
+        buildExChips();
+        renderToday();
+        renderSettings();
+        renderSavedFoodsList();
+    }
+
+    if (!state.setupDone) {
+        renderSetupStep();
+    } else {
+        document.getElementById('onboarding').classList.add('hidden');
+        renderApp();
+    }
     </script>
-    <script src="/js/supabase.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/macros.js"></script>
-    <script src="/js/charts.js"></script>
-    <script src="/js/notifications.js"></script>
-    <script src="/app.js"></script>
-</body>
-</html>
+    </body>
+    </html>
